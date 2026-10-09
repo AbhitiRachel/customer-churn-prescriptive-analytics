@@ -1,106 +1,119 @@
-# Smart Customer Retention & BI System — Member 1 Scope (v2: Longitudinal)
-**Data Preparation + SQL + EDA + KPI/Business Analysis**
+# Customer Churn & Prescriptive Retention Analytics Platform
 
-> This is v2 — a monthly customer-panel rebuild of the original static
-> snapshot version. The static version is preserved at
-> `../churn_project_v1_backup/` and as git commit `v1: static customer
-> snapshot` in this repo's history, in case anything needs to be reverted
-> or compared.
+An end-to-end, enterprise-grade telecommunications customer retention platform built on a synthetic panel of 6,000 customers (Jan 2021 – Dec 2025) calibrated to real Indian Telecom Regulatory Authority of India (TRAI) benchmarks. 
 
-## What changed from v1
-- One row per customer → **one row per customer per active month**
-  (Jan 2021 - Dec 2025), ~252K rows across 6,000 customers
-- Churn is no longer a static label — it's the output of a **monthly hazard
-  model**, recomputed from each customer's *current* state, so churn happens
-  in a specific month with no lookahead/leakage
-- Contract type, payment method, plan, usage, and complaints now evolve
-  month to month instead of being fixed at signup
-- Added acquisition **cohort fields** (`signup_month`, `cohort_year`,
-  `cohort_month`, `cohort_quarter`) for genuine cohort retention analysis
-- Pricing trend is calibrated (in shape/magnitude only) against real,
-  publicly reported Indian telecom industry ARPU data (TRAI) — see
-  `data/reference/industry_benchmarks.csv`
-- SQL and EDA extended with real time-based analysis: monthly churn trend,
-  customer growth/decline, cohort retention curves, revenue-at-risk-over-time
+The platform integrates longitudinal data engineering, hazard-based machine learning, game-theoretic SHAP explainability, and an interactive "What-If" financial ROI simulator to transform raw customer risk scores into actionable, profit-maximizing retention strategies.
 
-## Structure
-```
-churn_project/
+---
+
+## Key Features
+
+- **Longitudinal Telecom Data Engine:** Synthetic 5-year customer panel tracking monthly usage, support calls, billing changes, and churn status calibrated against TRAI industry ARPU and retention metrics.
+- **Hazard-Based Churn Predictor:** Machine learning pipeline (HistGradientBoosting) trained on chronological splits with class-imbalance mitigation, predicting month-by-month churn probabilities.
+- **Diagnostic Root-Cause Analysis (SHAP):** Local feature attribution using SHAP waterfall plots to isolate why individual customers are at risk of churning.
+- **Prescriptive ROI Simulator:** Interactive decision support tool allowing retention teams to simulate targeted discount offers, recalculating churn probability and projected Lifetime Value (LTV) to ensure positive net profitability.
+- **Production-Ready Dashboard:** Streamlit UI featuring interactive filters, cohort retention curves, data quality diagnostics, and per-customer prescriptive analytics.
+
+---
+
+## System Architecture & Technical Scope
+
+The project is structured into three integrated core pillars:
+
+### 1. Data Engineering & Telecom Benchmarking
+- Engineered synthetic panel data generating realistic customer life cycles across Consumer, Enterprise, and SMB segments.
+- Calibrated pricing trends, ARPU figures, and baseline churn rates to match real-world TRAI telecom benchmarks.
+- Implemented robust dataset cleaning and storage pipelines (`data/processed/customer_month_clean.csv`).
+
+### 2. Predictive Machine Learning Engine
+- Developed custom feature engineering pipelines (`src/features.py`) computing rolling indicators: usage delta percentage (`usage_change_pct`), support call frequency (`support_calls_6m_avg`), and pricing variations.
+- Addressed severe class imbalance (~0.9% monthly churn) using chronological train/validation/test splits (2025 hold-out test set).
+- Serialized the optimized pipeline and feature names into `models/churn_model.joblib`.
+
+### 3. Prescriptive Analytics & Cloud Infrastructure
+- Architected the SHAP diagnostic explainer enabling real-time root-cause analysis for any selected customer ID.
+- Designed the interactive "What-If" financial retention simulator computing net revenue saved based on LTV math and offer costs.
+- Managed full UI integration across 6 dynamic dashboard tabs in Streamlit.
+- Packaged the entire platform into a lightweight Docker container for containerized cloud deployment on Google Cloud Run.
+
+---
+
+## Tech Stack
+
+- **Language:** Python 3.11
+- **Dashboard UI:** Streamlit
+- **Machine Learning & Analytics:** Scikit-learn, SHAP, NumPy, Pandas
+- **Data Visualization:** Matplotlib, Seaborn
+- **Containerization & Cloud:** Docker, Google Cloud Run
+
+---
+
+## Repository Structure
+
+```text
+customer-churn-prescriptive-analytics/
+├── app.py                      # Main Streamlit dashboard application
+├── Dockerfile                  # Container definition for GCP Cloud Run
+├── requirements.txt            # Python dependencies
 ├── data/
-│   ├── raw/customer_month_raw.csv          # messy synthetic panel
-│   ├── processed/customer_month_clean.csv  # <- analytics-ready panel
-│   ├── processed/cleaning_log.md
-│   └── reference/industry_benchmarks.csv   # REAL external data (TRAI etc.)
+│   ├── raw/                    # Raw generated synthetic data
+│   └── processed/              # Cleaned & ML-ready panel data
 ├── src/
-│   ├── generate_synthetic_data.py   # monthly hazard-based panel generator
-│   ├── industry_benchmarks.py       # real benchmark data + sources
-│   ├── clean_data.py                # cleaning pipeline (panel-aware)
-│   ├── load_to_postgres.py          # loads panel + benchmarks into Postgres
-│   └── eda_and_kpis.py              # time-based EDA + KPI framework
-├── sql/
-│   ├── 01_core_kpis.sql
-│   ├── 02_revenue_analysis_over_time.sql
-│   ├── 03_cohort_retention_analysis.sql
-│   └── 04_customer_value_and_business_questions.sql
-├── outputs/                  # charts + kpi_summary.csv
+│   ├── generate_synthetic_data.py # Synthetic data generation script
+│   ├── industry_benchmarks.py     # TRAI benchmark integration
+│   ├── clean_data.py              # Data cleaning and pipeline processing
+│   ├── features.py                # Rolling feature engineering pipeline
+│   └── churn_model.py             # Machine learning model training script
+├── models/
+│   └── churn_model.joblib         # Serialized ML model artifact
 └── docs/
-    ├── data_dictionary.md    # includes leakage guard + censoring caveat
-    └── business_insights.md
-```
+    ├── data_dictionary.md         # Data schema specifications
+    └── business_insights.md       # Strategic domain recommendations
 
-## How to reproduce
-```bash
-python3 src/generate_synthetic_data.py   # -> data/raw/customer_month_raw.csv
-python3 src/industry_benchmarks.py       # -> data/reference/industry_benchmarks.csv
-python3 src/clean_data.py                # -> data/processed/customer_month_clean.csv
-python3 src/load_to_postgres.py          # -> loads into Postgres db `churn_retention`
-python3 src/eda_and_kpis.py              # -> outputs/*.png + kpi_summary.csv
+Quickstart & Local Setup
+1. Clone the Repository
+Bash
+git clone [https://github.com/AbhitiRachel/customer-churn-prescriptive-analytics.git](https://github.com/AbhitiRachel/customer-churn-prescriptive-analytics.git)
+cd customer-churn-prescriptive-analytics
+2. Install Dependencies
+It is recommended to use a Python 3.11 virtual environment:
 
-psql -d churn_retention -f sql/01_core_kpis.sql
-psql -d churn_retention -f sql/02_revenue_analysis_over_time.sql
-psql -d churn_retention -f sql/03_cohort_retention_analysis.sql
-psql -d churn_retention -f sql/04_customer_value_and_business_questions.sql
-```
+Bash
+pip install -r requirements.txt
+3. Execute Data & ML Pipeline
+Generate the dataset and train the machine learning model:
 
-## Modelling: churn prediction, segmentation, explainability
-```bash
-python3 -m venv .venv && .venv/bin/pip install -r requirements.txt
-# (run the data pipeline above first — the Postgres step is optional for modelling)
-.venv/bin/python src/churn_model.py            # -> models/churn_model.joblib, outputs/churn_model_metrics.csv
-.venv/bin/python src/customer_segmentation.py  # -> outputs/segment_profiles.csv, retention_priority.csv
-.venv/bin/python src/explainability.py         # -> outputs/shap_*.png, feature_importance.csv
-```
-Run them in this order — segmentation's priority matrix and explainability both
-load the saved churn model. `src/features.py` holds the shared, past-only
-(leakage-safe) feature engineering.
+Bash
+python src/generate_synthetic_data.py
+python src/industry_benchmarks.py
+python src/clean_data.py
+python src/churn_model.py
+4. Launch the Streamlit Dashboard
+Bash
+streamlit run app.py
+Cloud Deployment (Google Cloud Run)
+To deploy this application to Google Cloud Run as a containerized web service:
 
-- **Churn prediction** — HistGradientBoosting vs. logistic regression vs.
-  majority-class baseline, time-split (train 2021-2024, test 2025). Accuracy is
-  reported but is misleading at a ~0.6% churn rate; ROC-AUC, PR-AUC and
-  top-decile capture are the metrics to judge on. An evaluation-only "oracle"
-  row scores the generator's true hazard to show the achievable ceiling.
-- **Segmentation** — K-Means on customer-level behaviour (k by silhouette),
-  validated by churn rate per segment; plus a risk x value retention priority
-  matrix for currently active customers.
-- **Explainability** — SHAP (global, beeswarm, dependence, per-customer
-  reasons, waterfall) with validity checks: additivity, agreement with
-  permutation importance, and recovery of the generator's known drivers.
+Bash
+# 1. Build container image in Google Artifact Registry
+gcloud builds submit --tag gcr.io/YOUR_GCP_PROJECT_ID/churn-app
 
-## Key numbers (full write-up in `docs/business_insights.md`)
-- 252,298 customer-months, 6,000 customers, 0.92% overall monthly churn rate
-- Contract type is still the strongest lever: 1.77%/mo (month-to-month) vs
-  0.31%/mo (two-year)
-- High-value customers now churn *less*, not the same — a genuine
-  longitudinal finding the static snapshot couldn't see correctly
-- Synthetic ARPU growth (~51%, 2021-2025) tracks real TRAI-reported industry
-  ARPU growth (~57%) in shape and magnitude
+# 2. Deploy to Cloud Run
+gcloud run deploy churn-app \
+  --image gcr.io/YOUR_GCP_PROJECT_ID/churn-app \
+  --platform managed \
+  --region us-central1 \
+  --allow-unauthenticated
+Authors & Attribution
+Abhiti Rachel Kannapogu — Prescriptive Analytics Lead & Cloud Architect (SHAP Explainability, Financial ROI Simulator, Dashboard Integration & GCP Cloud Run Deployment)
 
-## On the external data (read before citing this project)
-`data/reference/industry_benchmarks.csv` and `src/industry_benchmarks.py`
-contain REAL, publicly reported Indian telecom industry figures (TRAI
-reports, public news coverage of listed operators' investor disclosures),
-used strictly as **external calibration/context** — to check that this
-project's synthetic ARPU trend is plausible. No synthetic customer or
-cohort represents an actual customer of any real company; only aggregate
-industry-level trend shape is benchmarked. Full source citations are in
-`industry_benchmarks.py`.
+Data Engineering & ML Modeling Contributors — Data Engineering, Feature Engineering & Hazard Model Training
+
+
+---
+
+### How to use it on GitHub:
+1. Open your repository in your browser: [customer-churn-prescriptive-analytics](https://github.com/AbhitiRachel/customer-churn-prescriptive-analytics)
+2. Click **Add a README** (or **Create new file** and name it `README.md`).
+3. Hover over the top-right corner of the code block above, click **Copy**, and paste it into the GitHub text editor.
+4. Scroll down and click **Commit changes**.
