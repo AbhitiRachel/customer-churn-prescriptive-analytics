@@ -1,0 +1,5 @@
+check,value,pass
+SHAP additivity: max |base + sum(SHAP) - model log-odds|,1.509903313490213e-14,True
+"Spearman rank correlation, SHAP vs permutation importance",0.7584158415841583,True
+"Top-5 feature overlap, SHAP vs permutation importance",1.0,True
+Share of SHAP top-10 features that are true generator drivers,0.9,True

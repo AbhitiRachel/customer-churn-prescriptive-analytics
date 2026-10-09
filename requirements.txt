@@ -1,0 +1,13 @@
+pandas==3.0.6
+numpy==2.5.3
+python-dateutil==2.9.0.post0
+matplotlib==3.11.2
+seaborn==0.13.2
+scikit-learn==1.9.1
+scipy==1.18.1
+shap==0.52.0
+joblib==1.6.0
+# optional: only for src/load_to_postgres.py and app.py
+# sqlalchemy
+# psycopg2-binary
+# streamlit

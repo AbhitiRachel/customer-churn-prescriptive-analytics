@@ -1,0 +1,11 @@
+kpi,value
+panel_rows,252298
+unique_customers,6000
+observation_window,2021-01-01 to 2025-12-01
+active_customers_latest_month,3697
+avg_arpu_latest_month,98.08
+monthly_revenue_run_rate_latest,362601.96
+overall_monthly_churn_rate_pct,0.921
+pct_customers_ever_churned_in_window,38.72
+avg_tenure_months_latest,80.5
+revenue_lost_latest_month_to_churn,1950.67

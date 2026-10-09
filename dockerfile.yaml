@@ -1,0 +1,25 @@
+FROM python:3.11-slim
+
+WORKDIR /app
+
+# Install system dependencies needed for compiling packages if needed
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    build-essential \
+    && rm -rf /var/lib/apt/lists/*
+
+# Copy requirements and install
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Copy all project files into the container
+COPY . .
+
+# Expose Streamlit's default port
+EXPOSE 8080
+
+# Configure Streamlit to run on Cloud Run's port
+ENV PORT=8080
+ENV STREAMLIT_SERVER_PORT=8080
+ENV STREAMLIT_SERVER_ADDRESS=0.0.0.0
+
+CMD ["streamlit", "run", "app.py"]

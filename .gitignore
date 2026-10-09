@@ -1,0 +1,23 @@
+# Generated datasets
+data/raw/*.csv
+data/processed/*.csv
+
+# PostgreSQL/local database
+*.db
+*.sqlite
+*.sqlite3
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+.env
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Temporary files
+*.tmp
+*.log

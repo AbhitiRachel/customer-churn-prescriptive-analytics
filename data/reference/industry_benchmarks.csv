@@ -1,0 +1,11 @@
+year,metric,value,unit,note,source
+2021,blended_wireless_arpu,121.2,INR/month,Industry blended ARPU remained depressed pre-tariff-hikes (pandemic-era pricing),"TRAI PIR reports, FY2021-22 series"
+2022,blended_wireless_arpu,131.0,INR/month,Gradual ARPU recovery as data consumption grew,"TRAI PIR reports, FY2022-23 series"
+2023,blended_wireless_arpu,146.4,INR/month,"Pre-tariff-hike level, referenced as FY23-24 baseline (Rs 149.25 cited for FY23-24)","Voice&Data (2025), citing TRAI FY2023-24 data"
+2024,blended_wireless_arpu,175.0,INR/month,Post July-2024 tariff hikes (12-25% across Jio/Airtel/Vi) began lifting industry ARPU,Business Today (Apr 2025); Analysys Mason (Sep 2024)
+2025,blended_wireless_arpu,190.0,INR/month,"TRAI reported industry ARPU of Rs 174.46 for FY2024-25, trending toward ~Rs 196 by early 2026",Voice&Data (2025); TRAI QPIR Q.E. Dec-25/Mar-26
+2021,subscriber_growth_pct_yoy,0.5,%,Total telecom subscriber base grew only marginally 2021-2022 (near-saturation market),TRAI Annual Performance Indicator Report series
+2023,subscriber_growth_pct_yoy,2.1,%,"Jio +37M, Airtel +12.3M net adds in 2023; partially offset by Vi's continued decline (-12.8M)",S&P Global Market Intelligence (Aug 2024)
+2025,subscriber_growth_pct_yoy,0.13,%,"Total subscriber base ~1.2B as of Mar-2025, stagnant growth, teledensity dipped slightly","TRAI Annual PIR 2024-25 (via LightReading, Jul 2025)"
+2021,avg_monthly_data_usage_gb,14.1,GB/subscriber,Steady 4G-driven data consumption growth baseline,"TRAI PIR series (approximate, interpolated from reported trend)"
+2025,avg_monthly_data_usage_gb,21.5,GB/subscriber,Usage growth continued through 4G/5G rollout,"TRAI Annual PIR 2024-25 (via LightReading, Jul 2025)"
